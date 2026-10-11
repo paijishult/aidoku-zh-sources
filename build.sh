@@ -25,4 +25,11 @@ for src in ./src/rust/*; do
   )
 done
 
-aidoku build ./src/**/*.aix
+shopt -s globstar nullglob
+packages=(./src/**/*.aix)
+if ((${#packages[@]} == 0)); then
+  echo "No .aix source packages were built" >&2
+  exit 1
+fi
+
+aidoku build "${packages[@]}"
