@@ -18,7 +18,7 @@ jobs:
 
       # 1. 配置 Rust 环境，并明确添加 wasm32 目标
       - name: Setup Rust toolchain
-        uses: dtolnay/rust-toolchain@stable
+        uses: dtolnay/rust-toolchain@nightly
         with:
           targets: wasm32-unknown-unknown
 
