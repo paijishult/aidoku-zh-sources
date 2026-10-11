@@ -32,4 +32,32 @@ if ((${#packages[@]} == 0)); then
   exit 1
 fi
 
+source_index=$(mktemp)
+cp public/index.json "$source_index"
 aidoku build "${packages[@]}"
+
+mkdir -p public/sources public/icons
+cp src/rust/zh.baozimh2/package.aix public/sources/zh.baozimh2-v7.aix
+cp src/rust/zh.baozimh2/res/Icon.png public/icons/zh.baozimh2-v7.png
+jq '
+  if any(.[]; .id == "zh.baozimh2") then
+    map(if .id == "zh.baozimh2" then
+      .name = "佳佳包子漫画v7" |
+      .file = "zh.baozimh2-v7.aix" |
+      .icon = "zh.baozimh2-v7.png" |
+      .version = 7
+    else . end)
+  else
+    . + [{
+      "id": "zh.baozimh2",
+      "name": "佳佳包子漫画v7",
+      "file": "zh.baozimh2-v7.aix",
+      "icon": "zh.baozimh2-v7.png",
+      "lang": "zh",
+      "version": 7,
+      "nsfw": 0
+    }]
+  end
+' "$source_index" > public/index.json
+jq -c . public/index.json > public/index.min.json
+rm -f "$source_index"
